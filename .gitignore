@@ -1,0 +1,30 @@
+# Ignore virtual environments
+venv/
+.env
+__pycache__/
+*.pyc
+
+# Ignore OS/system files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE/project files
+.vscode/
+.idea/
+
+# Ignore local database
+chroma_db/
+
+# Ignore logs
+*.log
+
+# Ignore Streamlit cache
+.streamlit/
+
+# Ignore Jupyter notebooks checkpoints (if you make any later)
+.ipynb_checkpoints/
+
+# Ignore compiled files
+*.pyo
+*.pyd
+*.so
