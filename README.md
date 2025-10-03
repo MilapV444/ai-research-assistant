@@ -1,6 +1,5 @@
 🧠 AI Research Assistant
-<img width="919" height="614" alt="image" src="https://github.com/user-attachments/assets/2c976a68-b2b2-47cd-a629-35a4cdefa9fd" />
-
+<img width="1900" height="784" alt="image" src="https://github.com/user-attachments/assets/f0e9374f-5302-4708-be6f-d6d362eb3501" />
 
 Live Demo: 🚀 Try it here
 
@@ -94,4 +93,5 @@ AI: The paper highlights that RL improves sample efficiency...
 
 This project is licensed under the MIT License – see the LICENSE
  file for details.
+
 
