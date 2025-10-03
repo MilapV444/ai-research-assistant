@@ -7,3 +7,6 @@ pypdf
 tiktoken
 python-dotenv
 streamlit
+openai
+duckduckgo-search
+faiss-cpu
