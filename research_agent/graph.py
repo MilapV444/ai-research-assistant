@@ -13,7 +13,7 @@ llm = ChatOpenAI(
     openai_api_key=os.getenv("OPENAI_API_KEY")
 )
 
-# Tool for document QA
+# Tool for document QA (safe load)
 doc_qa = get_doc_qa("data")
 
 # 🔹 Define nodes
@@ -25,9 +25,12 @@ def search_node(state: ResearchState) -> ResearchState:
     return state
 
 def doc_node(state: ResearchState) -> ResearchState:
-    """Run local document Q&A."""
+    """Run local document Q&A if available."""
     query = state["query"]
-    results = doc_qa.run(query)
+    if doc_qa:
+        results = doc_qa.run(query)
+    else:
+        results = "No local documents available."
     state["doc_results"] = results
     return state
 
