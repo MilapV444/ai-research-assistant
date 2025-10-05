@@ -1,3 +1,6 @@
+import sys, os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 import streamlit as st
 from research_agent.graph import build_graph
 
@@ -90,3 +93,4 @@ for speaker, msg in st.session_state.chat_history:
         st.markdown(f'<div class="bot-bubble">{msg}</div>', unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
+
