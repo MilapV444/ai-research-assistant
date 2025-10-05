@@ -7,3 +7,4 @@ pypdf
 tiktoken
 python-dotenv
 streamlit
+duckduckgo-search>=5.3.0
