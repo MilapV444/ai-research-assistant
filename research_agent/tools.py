@@ -1,19 +1,11 @@
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_community.tools import DuckDuckGoSearchRun
 import os
-
-# 🔁 Compatibility-safe import for RetrievalQA
-try:
-    # Newer LangChain versions
-    from langchain.chains.retrieval import RetrievalQA
-except ModuleNotFoundError:
-    try:
-        # Older LangChain versions
-        from langchain.chains.retrieval_qa.base import RetrievalQA
-    except ModuleNotFoundError:
-        # Fallback for community versions
-        from langchain_community.chains import RetrievalQA
 
 
 # 🔍 Web Search Tool
@@ -27,7 +19,6 @@ def create_vectorstore(folder_path: str = "data"):
     embeddings = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
     docs = []
 
-    # Load all supported files in the folder
     for file in os.listdir(folder_path):
         path = os.path.join(folder_path, file)
         if file.endswith(".txt"):
@@ -38,10 +29,10 @@ def create_vectorstore(folder_path: str = "data"):
     if not docs:
         raise ValueError(f"No supported documents found in {folder_path}")
 
-    # Build FAISS and save
     vectorstore = FAISS.from_documents(docs, embeddings)
     vectorstore.save_local(folder_path)
     print(f"✅ FAISS index created and saved in {folder_path}")
+
 
 # 📄 Load FAISS Index
 def load_vectorstore(folder_path: str = "data"):
@@ -51,27 +42,26 @@ def load_vectorstore(folder_path: str = "data"):
         raise FileNotFoundError(f"No FAISS index found in {folder_path}. Run create_vectorstore() first.")
     return FAISS.load_local(folder_path, embeddings, allow_dangerous_deserialization=True)
 
-# 📄 Retrieval Q&A
+
+# 🧠 Retrieval Q&A (new LangChain ≥ 0.3 syntax)
 def get_doc_qa(folder_path: str = "data"):
     """
-    Create a RetrievalQA chain to answer questions from local documents.
-    Falls back if no FAISS index exists.
+    Build a retrieval chain to answer questions using local documents.
     """
     try:
         vectorstore = load_vectorstore(folder_path)
-        retriever = vectorstore.as_retriever()
+        retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
         llm = ChatOpenAI(model="gpt-4o-mini", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
 
-        return RetrievalQA.from_chain_type(
-            llm=llm,
-            retriever=retriever,
-            chain_type="stuff"
+        prompt = ChatPromptTemplate.from_template(
+            "You are a helpful research assistant. Use the context below to answer accurately.\n\n{context}\n\nQuestion: {input}"
         )
+
+        combine_docs_chain = create_stuff_documents_chain(llm, prompt)
+        retrieval_chain = create_retrieval_chain(retriever, combine_docs_chain)
+
+        return retrieval_chain
     except FileNotFoundError:
         print("⚠️ No FAISS index found. Run create_vectorstore() first or skip document Q&A.")
         return None
-
-
-
-
-
