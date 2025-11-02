@@ -1,15 +1,19 @@
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+from langchain_community.tools import DuckDuckGoSearchRun
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain_core.prompts import ChatPromptTemplate
+import os
+
+# Compatibility fallback for create_retrieval_chain
 try:
     from langchain.chains import create_retrieval_chain
 except ImportError:
-    # Fallback for older LangChain versions
-    from langchain.chains.retrieval import create_retrieval_chain
-from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.tools import DuckDuckGoSearchRun
-import os
+    try:
+        from langchain.chains.retrieval import create_retrieval_chain
+    except ImportError:
+        from langchain.chains.retrieval_qa.base import RetrievalQA as create_retrieval_chain
 
 
 # 🔍 Web Search Tool
@@ -69,4 +73,5 @@ def get_doc_qa(folder_path: str = "data"):
     except FileNotFoundError:
         print("⚠️ No FAISS index found. Run create_vectorstore() first or skip document Q&A.")
         return None
+
 
