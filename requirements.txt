@@ -1,12 +1,17 @@
-langchain==0.3.7
-langchain-core==0.3.15
-langchain-community==0.3.7
-langchain-openai==0.3.4
-langgraph==0.1.15
-chromadb>=0.5.0
+# --- Core LangChain ecosystem ---
+langchain==0.2.15
+langchain-core==0.2.35
+langchain-community==0.2.7
+langchain-openai==0.1.22
+langgraph==0.0.57
+
+# --- Utilities ---
+chromadb==0.4.22
+duckduckgo-search==5.3.0
 pypdf
 tiktoken
 python-dotenv
 streamlit
-duckduckgo-search>=5.3.0
-faiss-cpu
+
+# --- Vectorstore ---
+faiss-cpu==1.8.0
