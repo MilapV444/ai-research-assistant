@@ -1,11 +1,20 @@
-# research_agent/tools.py
-
-from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader, PyPDFLoader
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain.chains.retrieval import RetrievalQA
 import os
+
+# 🔁 Compatibility-safe import for RetrievalQA
+try:
+    # Newer LangChain versions
+    from langchain.chains.retrieval import RetrievalQA
+except ModuleNotFoundError:
+    try:
+        # Older LangChain versions
+        from langchain.chains.retrieval_qa.base import RetrievalQA
+    except ModuleNotFoundError:
+        # Fallback for community versions
+        from langchain_community.chains import RetrievalQA
+
 
 # 🔍 Web Search Tool
 search_tool = DuckDuckGoSearchRun()
@@ -61,6 +70,7 @@ def get_doc_qa(folder_path: str = "data"):
     except FileNotFoundError:
         print("⚠️ No FAISS index found. Run create_vectorstore() first or skip document Q&A.")
         return None
+
 
 
 
